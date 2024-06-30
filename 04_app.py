@@ -198,7 +198,7 @@ def extract_abstract_number(string):
 
 @st.cache_data
 def load_data():
-    with open('temporary_res 2.json', 'r') as f:
+    with open('results/last_results.json', 'r') as f:
         data = json.load(f)
     
     processed_data = []
