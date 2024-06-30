@@ -69,7 +69,7 @@ We set up a data pipeline in Dagster. The training data were published on Huggin
 
 ## Fine Tuning
 
-Execute the Python script `[finetuning_gene_disease](02_finetuning_gene_disease.py).py` to finetune the model yourself.
+Execute the Python script `02_finetuning_gene_disease.py` to finetune the model yourself.
 
 ## Parsing Conference Abstracts
 
