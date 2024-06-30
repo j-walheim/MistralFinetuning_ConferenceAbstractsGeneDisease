@@ -52,11 +52,11 @@ def prompts_jsonl_pubmed(context: AssetExecutionContext, data_with_pubmed: dict)
 
     # Todo: move code to polars
     df = pd.concat([df.to_pandas() for df in data_with_pubmed.values()], ignore_index=True)
-    createPromptsJsonl(df,'question_answer')
+    createPromptsJsonl(df,'pubmed_qa')
     
 @asset(ins={"arxiv_abstracts": AssetIn(partition_mapping=AllPartitionMapping())})
 def prompts_jsonl_arxiv(context: AssetExecutionContext, arxiv_abstracts: dict) -> None:
 
     # Todo: move code to polars
     df = pd.concat([df.to_pandas() for df in arxiv_abstracts.values()], ignore_index=True)
-    createPromptsJsonl(df,'arxiv')
+    createPromptsJsonl(df,'arxiv_qa')
