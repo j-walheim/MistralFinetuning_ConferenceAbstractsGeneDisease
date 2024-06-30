@@ -2,8 +2,8 @@ from dagster import asset, AssetExecutionContext
 import polars as pl
 import os
 from glob import glob
-NUM_ABSTRACTS_SUB=100E3 # take only a subset of abstracts - keep price for finetuning low
-NUM_DISEASE_MAX=5E3 # very different numbers for different indications - put upper limit to get more equal representation in training dataimport polars as pl
+NUM_ABSTRACTS_SUB=20E3 # take only a subset of abstracts - keep price for finetuning low
+NUM_DISEASE_MAX=2E3 # very different numbers for different indications - put upper limit to get more equal representation in training dataimport polars as pl
 import numpy as np
 
 from .gene_disease_evidence import gene_disease_combined

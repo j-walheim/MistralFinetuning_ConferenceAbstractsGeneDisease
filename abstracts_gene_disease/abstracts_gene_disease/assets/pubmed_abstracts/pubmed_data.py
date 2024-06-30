@@ -6,8 +6,8 @@ import time
 
 Entrez.email = os.getenv("EMAIL", "your.email@example.com")
 
-BATCH_SIZE = 1000
-NUM_PARTITIONS = 100
+BATCH_SIZE = 100
+NUM_PARTITIONS = 200
 
 # Create a StaticPartitionsDefinition
 pubmed_partitions = StaticPartitionsDefinition([f"partition_{i}" for i in range(NUM_PARTITIONS)])

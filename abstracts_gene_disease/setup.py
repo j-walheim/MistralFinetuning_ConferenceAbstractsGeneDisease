@@ -10,7 +10,6 @@ setup(
         "db-dtypes",
         'polars',
         'biomart',
-        'json'
     ],
     extras_require={"dev": ["dagster-webserver", "pytest"]},
 )

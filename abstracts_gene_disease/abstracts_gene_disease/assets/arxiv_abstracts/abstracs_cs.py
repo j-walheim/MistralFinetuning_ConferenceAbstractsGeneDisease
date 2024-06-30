@@ -5,8 +5,8 @@ from dagster import asset, AssetExecutionContext, StaticPartitionsDefinition
 import polars as pl
 import time
 
-BATCH_SIZE = 500
-NUM_PARTITIONS = 100
+BATCH_SIZE = 100
+NUM_PARTITIONS = 200
 SLEEP_BETWEEN_BATCHES = 3
 
 arxiv_partitions = StaticPartitionsDefinition([f"partition_{i}" for i in range(NUM_PARTITIONS)])
