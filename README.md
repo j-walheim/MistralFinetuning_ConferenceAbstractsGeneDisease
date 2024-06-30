@@ -10,17 +10,56 @@ The flood of information in medical abstracts presents a challenge for manual re
 
 ## Key Features
 
-Extracts gene and disease information from conference abstracts. Results are stored in JSON format and can be explored using a streamlit GUI. 
+- Extracts gene and disease information from conference abstracts
+- Results are stored in JSON format
+- Explore results using a Streamlit GUI
 
+## Data Sources and Feature Preparation
+
+1. **OpenTargets Platform**: We use the OpenTargets Platform as our primary source of gene-disease associations in PubMed abstracts.
+   - We ingest literature information from the platform
+   - Filter entries for cancer indications and in-human results
+
+2. **Complementary Information**:
+   - **Biomart**: Retrieve mapping of HGNSC symbols to HUGO symbols
+   - **PubMed**: OpenTargets only provides PubMed IDs, we retrieve the full abstracts from PubMed.
+
+3. **Data Volume**:
+   - Full dataset: ~190,000 labeled abstracts
+   - This version uses only 20k abstracts to keep fine-tuning costs low. As we refine and extend the functionality, we will eventually utilize the entire dataset of ~190,000 abstracts for more comprehensive training and improved performance.
+
+We set up a data pipeline in Dagster. The training data were published on Huggingface. If you nevertheless want to rerun the pipeline follow these steps:
+
+1. Open the folder `abstracts_gene_disease` and install the package with:
+   ```bash
+   pip install -e ".[dev]"
+   ```
+
+2. Then, start the Dagster UI web server:
+   ```bash
+   dagster dev
+   ```
+
+3. Open http://localhost:3000 with your browser to see the project and run the materialisation of the different assets. (Running the full materialisation from the command line does not work in this release due to several partitioned assets, this will be fixed in one of the next releases).
+
+## Fine Tuning
+
+Execute the Python script `finetuning_gene_disease.py` to finetune the model yourself.
+
+## Parsing Conference Abstracts
+
+`example_ASCO_abstracts.py` provides an example script to download and parse the contributions to this year's ASCO.
+
+## Exploration with Streamlit App
+
+[Details about the Streamlit app would go here]
 
 ## Future Developments
 
-This is the first version of our tool. Future iterations will include additional information extraction capabilities, such as:
-
-- Clinical trial identification and staging
-- Therapy types used in studies
-- Biomarker information
-- Patient cohort characteristics
-
-## Usage
-
+This is the first version of our tool. Future iterations will include:
+- Additional information extraction capabilities, such as:
+  - Clinical trial identification and staging
+  - Therapy types used in studies
+  - Biomarker information
+  - Patient cohort characteristics
+- Utilization of the full dataset (~190,000 abstracts) for improved model performance
