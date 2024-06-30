@@ -1,0 +1,31 @@
+Analyze the abstract below and extract disease and gene information. Only include explicitly stated facts. Use "n/a" if information is not clearly provided. Do not infer or guess. Respond in this exact JSON format:
+{
+  "Disease": "Disease name or n/a",
+  "Genes": "Gene1, Gene2, Gene3 or n/a"
+}
+
+Rules:
+- Only include explicitly stated disease and genes
+- List all genes as a comma-separated string in the Genes field
+- Use "n/a" if no disease or genes are mentioned
+- Prioritize precision over completeness
+- When in doubt, use "n/a"
+- Do not include any additional fields or comments
+
+Examples:
+{"Disease": "n/a", "Genes": "TP53, MDM2"}
+
+{"Disease": "n/a", "Genes": "n/a"}
+
+{"Disease": "Lung Cancer", "Genes": "n/a"}
+
+{"Disease": "Breast Cancer", "Genes": "BRCA1, BRCA2"}
+
+{"Disease": "Colorectal Cancer", "Genes": "APC"}
+
+
+
+Abstract:
+<abstract>
+[[[abstract]]]
+</abstract>
