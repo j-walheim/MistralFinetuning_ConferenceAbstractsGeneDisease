@@ -121,10 +121,10 @@ for _, row in tqdm(results.iterrows(), total=len(results), desc="Producing JSON"
 # Export results
 with open(out_file_json, "w") as json_file:
     json.dump(results_json, json_file, indent=4)
+
+with open('results/last_results.json', "w") as json_file:
+    json.dump(results_json, json_file, indent=4)
     
-    
-# %% export results
-#with open(out_file_json, "w") as json_file:
-#    json.dump(results, json_file, indent=4)
+
 
 
