@@ -60,22 +60,15 @@ def raw_opentargets_literature(context: AssetExecutionContext) -> pl.DataFrame:
 
 @asset(ins={"raw_opentargets_literature": AssetIn(partition_mapping=AllPartitionMapping())})
 def combined_partitions_literature(context: AssetExecutionContext,raw_opentargets_literature: dict) -> pl.DataFrame:
-    context.log.info(parquet_files)
-    parquet_files = raw_opentargets_literature
-#    parquet_files = glob(f"{dir_raw}/*.parquet")
-    context.log.info(f"Processing {len(parquet_files)} files")
-    context.log.info(f"Parquet files: {parquet_files}")
+ 
+    context.log.info(f"Processing {len(raw_opentargets_literature)} partitions")
     
     lazy_dfs = []
-    for f in parquet_files:
-        context.log.info(f"Processing {f}")
-        try:
-            lazy_df = pl.scan_parquet(f)
-            lazy_dfs.append(lazy_df)
-        except Exception as e:
-            context.log.error(f"Error processing {f}: {str(e)}")
-            raise
-    
+    for df in raw_opentargets_literature:
+
+        lazy_df = pl.DataFrame(df).lazy()
+        lazy_dfs.append(lazy_df)
+        
     try:
         combined_lazy = pl.concat(lazy_dfs)
         
@@ -83,3 +76,4 @@ def combined_partitions_literature(context: AssetExecutionContext,raw_opentarget
     except Exception as e:
         context.log.error(f"Error during concatenation or collection: {str(e)}")
         raise
+    
