@@ -50,9 +50,9 @@ else:
 client = MistralClient(api_key=os.environ["MISTRAL_API_KEY"])
 client.list_models()
 
-#model = 'open-mistral-7b'
-model = 'ft:open-mistral-7b:b22eb6cb:20240630:fff68fc7'
-
+model = 'open-mistral-7b'
+# old FT #model = 'ft:open-mistral-7b:b22eb6cb:20240630:fff68fc7'
+model = 'ft:open-mistral-7b:b22eb6cb:20240630:ca80350f'
 model_supp = model.replace(':', '_')
 # %%
 
@@ -67,21 +67,19 @@ out_file_csv = f'results/abstracts_features_{model_supp}.csv'
 results = []
 
 # Open the input CSV file
+# List to store the results
+results = []
+# Open the input CSV file
 with open(abstracts_file, "r") as csv_file:
     reader = csv.DictReader(csv_file)
-
     # Iterate through the rows in the input CSV file
     iteration_counter = 0
-    
-    
     for row in tqdm(reader, desc="Processing rows"):
         iteration_counter += 1
-        if iteration_counter >= 100:
-            break
-
+        # if iteration_counter >= 100:
+        #     break
         prompt_cur = prompt
         prompt_cur = prompt_cur.replace('[[[abstract]]]', row['Abstract'])
-
         try:
             # Query the model and store the response
             chat_response = client.chat(
@@ -92,8 +90,15 @@ with open(abstracts_file, "r") as csv_file:
         except Exception as e:
             print(f"Error querying model: {e}")
             row['response'] = "Error querying model"
-
         results.append(row)
+        
+        # Save intermediate results every 100 iterations
+        if iteration_counter % 50 == 0:
+            with open('intermediate_results.csv', 'w', newline='') as f:
+                writer = csv.DictWriter(f, fieldnames=results[0].keys())
+                writer.writeheader()
+                writer.writerows(results)
+            print(f"Saved intermediate results at iteration {iteration_counter}")
                 
 #export results as pickle - sometimes json parsing fails, don't want to lose all results
 with open('results/tmp.pkl', 'w') as f:

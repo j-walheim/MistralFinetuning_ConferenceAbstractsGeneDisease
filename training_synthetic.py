@@ -44,4 +44,4 @@ df = pd.read_csv('data/synthetic_diagnostic_abstracts.csv')
 # rename disease to disease_name and genes to gene_name
 df = df.rename(columns={'disease': 'disease_name', 'genes': 'gene'})
 
-createPromptsJsonl(df,'synthetic_qa')
+df_formatted = createPromptsJsonl(df,'synthetic_qa')

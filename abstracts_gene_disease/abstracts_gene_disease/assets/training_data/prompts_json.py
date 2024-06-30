@@ -41,9 +41,6 @@ def createPromptsJsonl(df, fname_out):
             json.dump(item, f)
             f.write('\n')
 
-    # If you want to print the result
-    print(json.dumps(df_formatted, indent=2))
-
     return df_formatted
 
 
