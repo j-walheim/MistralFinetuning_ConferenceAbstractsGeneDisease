@@ -9,7 +9,7 @@ BATCH_SIZE = 100
 NUM_PARTITIONS = 200
 SLEEP_BETWEEN_BATCHES = 3
 
-arxiv_partitions = StaticPartitionsDefinition([f"partition_{i}" for i in range(NUM_PARTITIONS)])
+arxiv_partitions = StaticPartitionsDefinition([str(i) for i in range(200)])
 
 def fetch_cs_abstracts(start_index, max_results):
     base_url = 'http://export.arxiv.org/api/query?'

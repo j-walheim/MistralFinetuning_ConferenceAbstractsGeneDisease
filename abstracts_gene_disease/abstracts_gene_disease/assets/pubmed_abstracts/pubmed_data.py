@@ -10,8 +10,7 @@ BATCH_SIZE = 100
 NUM_PARTITIONS = 200
 
 # Create a StaticPartitionsDefinition
-pubmed_partitions = StaticPartitionsDefinition([f"partition_{i}" for i in range(NUM_PARTITIONS)])
-
+pubmed_partitions = StaticPartitionsDefinition([str(i) for i in range(200)])
 @asset(partitions_def=pubmed_partitions)
 def data_with_pubmed(context: AssetExecutionContext, data_subsampled: pl.DataFrame) -> pl.DataFrame:
     # Get the current partition key

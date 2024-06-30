@@ -22,7 +22,7 @@ number_partitions = StaticPartitionsDefinition([str(i) for i in range(200)])
     partitions_def=number_partitions#,
 #    io_manager_key="polars_parquet_io_manager"
 )
-def raw_opentargets_literature(context: AssetExecutionContext) -> str:
+def raw_opentargets_literature(context: AssetExecutionContext) -> pl.DataFrame:
     url = "ftp.ebi.ac.uk"
     directory = "/pub/databases/opentargets/platform/22.04/output/literature-etl/parquet/matches/"
     partition_number = context.partition_key
@@ -54,33 +54,32 @@ def raw_opentargets_literature(context: AssetExecutionContext) -> str:
             df = filter_opentargets_literature(df)
     
     gc.collect()
-    return fname
+    return df
 
 
 
 @asset(ins={"raw_opentargets_literature": AssetIn(partition_mapping=AllPartitionMapping())})
-def combined_partitions_literature(context: AssetExecutionContext,raw_opentargets_literature: dict):# -> pl.DataFrame:
-    return None
-#     context.log.info(parquet_files)
-#     parquet_files = raw_opentargets_literature
-# #    parquet_files = glob(f"{dir_raw}/*.parquet")
-#     context.log.info(f"Processing {len(parquet_files)} files")
-#     context.log.info(f"Parquet files: {parquet_files}")
+def combined_partitions_literature(context: AssetExecutionContext,raw_opentargets_literature: dict) -> pl.DataFrame:
+    context.log.info(parquet_files)
+    parquet_files = raw_opentargets_literature
+#    parquet_files = glob(f"{dir_raw}/*.parquet")
+    context.log.info(f"Processing {len(parquet_files)} files")
+    context.log.info(f"Parquet files: {parquet_files}")
     
-#     lazy_dfs = []
-#     for f in parquet_files:
-#         context.log.info(f"Processing {f}")
-#         try:
-#             lazy_df = pl.scan_parquet(f)
-#             lazy_dfs.append(lazy_df)
-#         except Exception as e:
-#             context.log.error(f"Error processing {f}: {str(e)}")
-#             raise
+    lazy_dfs = []
+    for f in parquet_files:
+        context.log.info(f"Processing {f}")
+        try:
+            lazy_df = pl.scan_parquet(f)
+            lazy_dfs.append(lazy_df)
+        except Exception as e:
+            context.log.error(f"Error processing {f}: {str(e)}")
+            raise
     
-#     try:
-#         combined_lazy = pl.concat(lazy_dfs)
+    try:
+        combined_lazy = pl.concat(lazy_dfs)
         
-#         return combined_lazy.collect()
-#     except Exception as e:
-#         context.log.error(f"Error during concatenation or collection: {str(e)}")
-#         raise
+        return combined_lazy.collect()
+    except Exception as e:
+        context.log.error(f"Error during concatenation or collection: {str(e)}")
+        raise
