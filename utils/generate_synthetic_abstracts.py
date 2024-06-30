@@ -6,7 +6,7 @@ import random
 import json
 
 # Initialize the Mistral AI client
-client = MistralClient(api_key=open('../.keys/.key_mistral').read().strip())
+client = MistralClient(api_key=os.environ.get("MISTRAL_API_KEY"))
 model = "open-mistral-7b"
 
 # Read cancer types and define non-cancer topics
