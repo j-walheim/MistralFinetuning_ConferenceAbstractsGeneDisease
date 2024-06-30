@@ -5,56 +5,26 @@ import json
 import numpy as np
 import pandas as pd 
 import subprocess
+from utils.generate_synthetic_abstracts import generate_synthetic_abstracts, createPromptsJsonl
 
-# %%
+# %% create synthetic dataset
+fname_synthetic = "data/synthetic_abstracts.csv"
+fname_synthetic_json = 'data/synthetic_qa.jsonl'
+df_synth = generate_synthetic_abstracts(dir_out = fname_synthetic, target_rows=10)
 
-def createPromptsJsonl(df, fname_out):
-    prompt = open('./prompts/prompt_finetuning.txt', 'r').read()
+df = pd.read_csv(fname_synthetic)
 
-    # Create the formatted list of dictionaries
-    df_formatted = []
-    for index, row in df.iterrows():
-        # Skip empty abstracts
-        if pd.isna(row['abstract']) or row['abstract'].strip() == '':
-            continue
-
-        # Replace missing genes/diseases with 'n/a'
-        disease = row['disease_name'] if pd.notna(row['disease_name']) else 'n/a'
-        gene = row['gene'] if pd.notna(row['gene']) else 'n/a'
-
-        formatted_item = {
-            "messages": [
-                {"role": "user", "content": prompt.replace('[[[abstract]]]', row['abstract'])},
-                {"role": "assistant", "content": json.dumps({
-                    "Disease": disease,
-                    "Genes": gene
-                })}
-            ]
-        }
-        df_formatted.append(formatted_item)
-
-    # Write to jsonl
-    with open(fname_out + '.jsonl', 'w') as f:
-        for item in df_formatted:
-            json.dump(item, f)
-            f.write('\n')
-
-    return df_formatted
-
-if not os.path.exists('data/synthetic_qa.jsonl'):
-    df = pd.read_csv('data/synthetic_diagnostic_abstracts.csv')
-
-    # rename disease to disease_name and genes to gene_name
-    df = df.rename(columns={'disease': 'disease_name', 'genes': 'gene'})
-
-    df_formatted = createPromptsJsonl(df,'data/synthetic_qa')
+# rename disease to disease_name and genes to gene_name to be consistent with open targets. 
+# Todo: change in generation process in future version
+df = df.rename(columns={'disease': 'disease_name', 'genes': 'gene'})
+df_formatted = createPromptsJsonl(df,fname_synthetic_json)
 
 # %%
 
 os.environ["HUGGINGFACE_TOKEN"] = open('../.keys/.hf').read().strip()
 
 
-with open("data/pubmed_qa.jsonl", "r") as f:
+with open(fname_synthetic_json, "r") as f:
     data_pm = [json.loads(line) for line in f]
     # take only a part of the data - using everyhing would cost 100s of dollars
     data_pm = data_pm[:8000]
@@ -62,17 +32,14 @@ with open("data/synthetic_qa.jsonl", "r") as f:
     data_synthetic = [json.loads(line) for line in f]
     data_synthetic = data_synthetic[:4000]
 
-# Combine the data and shuffle them randomly to have a mix of abstracts with and without gene-disease associations and 
+# Combine the data and shuffle them randomly to have a mix of abstracts with and without gene-disease associations  
 # Todo: check if the mistral API does this anyway
 data = data_pm + data_synthetic
 del data_pm, data_synthetic
 data = [data[i] for i in np.random.permutation(len(data))]
 
 
-# %%
-
-
-
+# %% Train-test split
 
 split_train = int(0.95 * len(data))
 

@@ -3,6 +3,7 @@ from mistralai.client import MistralClient
 from mistralai.models.chat_completion import ChatMessage
 import pandas as pd
 import random
+import json
 
 # Initialize the Mistral AI client
 client = MistralClient(api_key=open('../.keys/.key_mistral').read().strip())
@@ -17,7 +18,7 @@ non_cancer_topics = [
     'General Oncology - No Specific Cancer Type'
 ]
 
-def generate_abstract():
+def synthesize_new_abstract():
     is_cancer = random.random() >= 0.2
     topic = random.choice(cancer_diseases if is_cancer else non_cancer_topics)
     
@@ -44,34 +45,58 @@ def generate_abstract():
         "genes": "n/a"
     }
 
-def generate_abstracts(target_rows=10000):
+def generate_synthetic_abstracts(dir_out,target_rows=10000):
     df = pd.DataFrame(columns=["abstract", "disease", "genes"])
-    if os.path.exists("data/synthetic_diagnostic_abstracts.csv"):
-        df = pd.read_csv("data/synthetic_diagnostic_abstracts.csv")
+    if os.path.exists(dir_out):
+        df = pd.read_csv(dir_out)
         print(f"Loaded existing CSV with {len(df)} rows.")
     
     while len(df) < target_rows:
         try:
-            df = pd.concat([df, pd.DataFrame([generate_abstract()])], ignore_index=True)
+            df = pd.concat([df, pd.DataFrame([synthesize_new_abstract()])], ignore_index=True)
             print(f"Generated abstract {len(df)}/{target_rows}")
             if len(df) % 10 == 0:
-                df.to_csv("data/synthetic_diagnostic_abstracts.csv", index=False)
+                df.to_csv(dir_out, index=False)
                 print(f"Progress saved. Current rows: {len(df)}")
         except Exception as e:
             print(f"An error occurred: {e}")
             break
     
-    df.to_csv("data/synthetic_diagnostic_abstracts.csv", index=False)
+    df.to_csv(dir_out, index=False)
     print(f"Final CSV saved with {len(df)} rows.")
     return df
 
-if __name__ == "__main__":
-    df = generate_abstracts()
-    print(df.head())
-    print("\nDistribution of diseases/methods:")
-    print(df['disease'].value_counts(dropna=False))
-    non_cancer_percentage = (df['disease'] == 'n/a').mean() * 100
-    print(f"\nPercentage of non-cancer topics: {non_cancer_percentage:.2f}%")
-    
-    
-    
+
+
+def createPromptsJsonl(df, fname_out):
+    prompt = open('./prompts/prompt_finetuning.txt', 'r').read()
+
+    # Create the formatted list of dictionaries
+    df_formatted = []
+    for index, row in df.iterrows():
+        # Skip empty abstracts
+        if pd.isna(row['abstract']) or row['abstract'].strip() == '':
+            continue
+
+        # Replace missing genes/diseases with 'n/a'
+        disease = row['disease_name'] if pd.notna(row['disease_name']) else 'n/a'
+        gene = row['gene'] if pd.notna(row['gene']) else 'n/a'
+
+        formatted_item = {
+            "messages": [
+                {"role": "user", "content": prompt.replace('[[[abstract]]]', row['abstract'])},
+                {"role": "assistant", "content": json.dumps({
+                    "Disease": disease,
+                    "Genes": gene
+                })}
+            ]
+        }
+        df_formatted.append(formatted_item)
+
+    # Write to jsonl
+    with open(fname_out, 'w') as f:
+        for item in df_formatted:
+            json.dump(item, f)
+            f.write('\n')
+
+    return df_formatted
