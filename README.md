@@ -77,6 +77,6 @@ Execute the Python script `[finetuning_gene_disease](02_finetuning_gene_disease.
 
 ## Exploration with Streamlit App
 
-[Details about the Streamlit app would go here]
+This Streamlit application provides an interactive interface for analyzing gene targets across various cancer types using the OncoTree ontology. It processes abstract data, maps cancer indications to OncoTree classifications, and visualizes gene target frequencies across different cancer types.
 
 
