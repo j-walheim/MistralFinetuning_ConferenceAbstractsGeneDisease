@@ -60,8 +60,7 @@ with open('prompts/prompt_finetuning.txt', 'r') as f:
     prompt = f.read()
 
 abstracts_file = 'data/extracted_abstracts.csv'
-out_file_json = f'results/abstracts_features_{model_supp}.json'
-out_file_csv = f'results/abstracts_features_{model_supp}.csv'
+out_file_json = f'results/abstracts_features2_{model_supp}.json'
 
 # List to store the results
 results = []
@@ -76,8 +75,8 @@ with open(abstracts_file, "r") as csv_file:
     iteration_counter = 0
     for row in tqdm(reader, desc="Processing rows"):
         iteration_counter += 1
-        # if iteration_counter >= 100:
-        #     break
+        if iteration_counter >= 10:
+             break
         prompt_cur = prompt
         prompt_cur = prompt_cur.replace('[[[abstract]]]', row['Abstract'])
         try:
@@ -103,18 +102,29 @@ with open(abstracts_file, "r") as csv_file:
 #export results as pickle - sometimes json parsing fails, don't want to lose all results
 with open('results/tmp.pkl', 'w') as f:
     json.dump(results, f, indent=4)
-# %%
+
+
+# convert results to dataframe
+results = pd.DataFrame(results)
+
 results_json = []
-for row in tqdm(results, desc="produce JSON"):
+
+# Iterate over DataFrame rows using iterrows()
+for _, row in tqdm(results.iterrows(), total=len(results), desc="Producing JSON"):
     try:
         response_json = json.loads(row['response'])
-        response_json['abstract'] = row['Abstract'] 
+        response_json['abstract'] = row['Abstract']
         results_json.append(response_json)
     except Exception as e:
         print(f"Error parsing JSON: {e}")
 
+# Export results
+with open('temporary_res.json', "w") as json_file:
+    json.dump(results_json, json_file, indent=4)
+    
+    
 # %% export results
-with open(out_file_json, "w") as json_file:
-    json.dump(results, json_file, indent=4)
+#with open(out_file_json, "w") as json_file:
+#    json.dump(results, json_file, indent=4)
 
 
