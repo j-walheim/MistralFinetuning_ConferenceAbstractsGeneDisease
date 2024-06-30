@@ -14,9 +14,6 @@ import numpy as np
 from huggingface_hub import login
 
 
-os.environ["HUGGINGFACE_TOKEN"] = open('../.keys/.hf').read()
-os.environ["MISTRAL_API_KEY"] = open('../.keys/.key_mistral').read()
-os.environ["WANDB_API_KEY"] = open('../.keys/.wandb').read()
 random.seed(123)
 # Define the dataset name
 dataset_name = "opentargets_abstracts_gene_disease"
