@@ -75,8 +75,8 @@ Execute the Python script `[finetuning_gene_disease](02_finetuning_gene_disease.
 This is the first version of our tool. Future iterations will include:
 
 - Additional information extraction capabilities, such as:
-  - Clinical trial identification and staging
-  - Therapy types used in studies
+  - Clinical trial information
+  - Treatments assessed in studies
   - Biomarker information
   - Patient cohort characteristics
 - Inclusion of additional data sources, e.g. clinical-trials.gov
