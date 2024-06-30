@@ -12,7 +12,6 @@ import os
 import pickle
 import requests
 
-os.environ["MISTRAL_API_KEY"] = open('../.keys/.key_mistral').read()
 
 # %% get conference abstracts
 
