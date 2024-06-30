@@ -6,10 +6,15 @@ import random
 from mistralai.client import MistralClient
 from mistralai.models.jobs import TrainingParameters
 from mistralai.models.chat_completion import ChatMessage
+from mistralai.models.jobs import WandbIntegrationIn, TrainingParameters
+
 import numpy as np
 
+
 os.environ["MISTRAL_API_KEY"] = open('../.keys/.key_mistral').read()
+os.environ["WANDB_API_KEY"] = open('../.keys/.wandb').read()
 random.seed(123)
+
 
 with open("data/pubmed_qa.jsonl", "r") as f:
     data_pm = [json.loads(line) for line in f]
@@ -27,7 +32,8 @@ data = [data[i] for i in np.random.permutation(len(data))]
 # %%
 
 # take only a part of the data - using everyhing would cost 100s of dollars
-data = data[:len(data)//5]
+#data = data[:len(data)//5]
+data = data[:len(data)//10]
 
 split_train = int(0.95 * len(data))
 
@@ -69,6 +75,7 @@ with open("data/val_data.jsonl", "rb") as f:
     val_file = client.files.create(file=("val_data.jsonl", f))
 
 
+
 # %%
 # Create fine-tuning job
 created_job = client.jobs.create(
@@ -76,10 +83,17 @@ created_job = client.jobs.create(
     training_files=[train_file.id],
     validation_files=[val_file.id],
     hyperparameters=TrainingParameters(
-        training_steps=1000,
+        training_steps=30,
         learning_rate=1e-4,
     ),
-    dry_run=True,
+    dry_run=False,
+    integrations=[
+        WandbIntegrationIn(
+            project="test_api",
+            run_name="test",
+            api_key=os.environ.get("WANDB_API_KEY"),
+        ).dict()
+    ]
 )
 #object='job.metadata' training_steps=10 train_tokens_per_step=131072 data_tokens=77476943 train_tokens=1310720 epochs=0.0169 expected_duration_seconds=80
 
@@ -93,34 +107,7 @@ print(created_job)
 # Monitor progress
 retrieved_job = client.jobs.retrieve(created_job.id)
 print(retrieved_job)
+# %%print all models are ready
+tmp = client.list_models()
 
-
-# %%
-# test
-
-with open("data/question_answer.jsonl", "r") as f:
-    data = [json.loads(line) for line in f]
-
-random.shuffle(data)
-
-# take only half the data - keep price low
-data = data[len(data)//2:]
-prompt_test = data[0]
-# %%
-
-message = data[1]['messages'][0]
-
-# Use fine-tuned model
-chat_response = client.chat(
-    model=retrieved_job.fine_tuned_model,
-    messages = [message],
-  #  messages=[ChatMessage(role='user', content='Abstract: [Your medical abstract here]')]
-)
-
-print(chat_response.choices[0].message.content)
-
-print(data[1]['messages'][1])
-# %%
-
-print(data[1]['messages'][0])
 # %%
