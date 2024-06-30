@@ -6,8 +6,6 @@ import colorsys
 import requests
 from fuzzywuzzy import process
 import re
-from dictionary_mapping_oncotree_to_larger_cancers import cancer_type_to_group
-
 
 def generate_dynamic_palette(indications):
     
@@ -37,26 +35,6 @@ def generate_dynamic_palette(indications):
         hex_color = '#' + ''.join([f'{int(x*255):02x}' for x in rgb])
         extended_palette.append(hex_color)
     return dict(zip(indications, extended_palette))
-
-def get_mesh_synonyms(term):
-    # Construct the URL
-    url = f'https://www.ncbi.nlm.nih.gov/mesh/?term=%22{requests.utils.quote(term)}%22%5BMeSH%20Terms%5D&cmd=DetailsSearch'
-    
-    # Make the request
-    response = requests.get(url)
-    content = response.text
-    
-    # Extract the desired section using regex
-    pattern = r'Entry Terms.*?<ul>(.*?)</ul>'
-    match = re.search(pattern, content, re.DOTALL)
-    
-    if match:
-        extracted_text = match.group(1).strip()
-        # Use regex to find all content between <li> tags
-        entries = re.findall(r'<li>(.*?)</li>', extracted_text)
-        return entries
-    else:
-        return []  # Return an empty list if no match is found
 
 def get_tumor_types():
     url = "https://oncotree.mskcc.org:443/api/tumorTypes"
@@ -198,7 +176,7 @@ def extract_abstract_number(string):
 
 @st.cache_data
 def load_data():
-    with open('results/last_results.json', 'r') as f:
+    with open('temporary_res 2.json', 'r') as f:
         data = json.load(f)
     
     processed_data = []
