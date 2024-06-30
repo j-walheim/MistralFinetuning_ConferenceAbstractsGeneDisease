@@ -7,6 +7,14 @@ import pandas as pd
 import subprocess
 from utils.generate_synthetic_abstracts import generate_synthetic_abstracts, createPromptsJsonl
 
+
+#
+if not os.path.exists("data"):
+    os.makedirs("data", exist_ok=True)
+if not os.path.exists('results'):
+    os.makedirs('results', exist_ok=True)
+    
+
 # %% create synthetic dataset
 fname_synthetic = "data/synthetic_abstracts.csv"
 fname_synthetic_json = 'data/synthetic_qa.jsonl'
