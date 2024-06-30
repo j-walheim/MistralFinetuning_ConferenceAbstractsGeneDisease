@@ -1,47 +1,65 @@
-# opentargetslitreview
+# Gene and Disease Information Extraction from Conference Abstracts
 
-This is a [Dagster](https://dagster.io/) project scaffolded with [`dagster project scaffold`](https://docs.dagster.io/getting-started/create-new-project).
+## Overview
 
-## Getting started
+This project aims to extract gene and disease information from medical conference abstracts using a fine-tuned version of Mistral 7B in Python. Our goal is to help researchers and healthcare professionals efficiently process the vast amount of information available in medical literature.
 
-First, install your Dagster code location as a Python package. By using the --editable flag, pip will install your Python package in ["editable mode"](https://pip.pypa.io/en/latest/topics/local-project-installs/#editable-installs) so that as you develop, local code changes will automatically apply.
+## Motivation
 
-```bash
-pip install -e ".[dev]"
-```
+The flood of information in medical abstracts presents a challenge for manual review. Major conferences in oncology and cancer research, such as ASCO (American Society of Clinical Oncology), AACR (American Association for Cancer Research), and ESMO (European Society for Medical Oncology), receive thousands of abstract submissions each year. Keeping track of all this information manually is virtually impossible, leading to potential missed opportunities in research and clinical practice. This tool aims to automate the extraction process, saving time and effort while maintaining accuracy.
 
-Then, start the Dagster UI web server:
+## Key Features
 
-```bash
-dagster dev
-```
+- Extracts gene and disease information from conference abstracts
+- Results are stored in JSON format
+- Explore results using a Streamlit GUI
 
-Open http://localhost:3000 with your browser to see the project.
+## Data Sources and Feature Preparation
 
-You can start writing assets in `opentargetslitreview/assets.py`. The assets are automatically loaded into the Dagster code location as you define them.
+1. **OpenTargets Platform**: We use the OpenTargets Platform as our primary source of gene-disease associations in PubMed abstracts.
+   - We ingest literature information from the platform
+   - Filter entries for cancer indications and in-human results
 
-## Development
+2. **Complementary Information**:
+   - **Biomart**: Retrieve mapping of HGNSC symbols to HUGO symbols
+   - **PubMed**: OpenTargets only provides PubMed IDs, we retrieve the full abstracts from PubMed.
 
-### Adding new Python dependencies
+3. **Data Volume**:
+   - Full dataset: ~190,000 labeled abstracts
+   - This version uses only 20k abstracts to keep fine-tuning costs low. As we refine and extend the functionality, we will eventually utilize the entire dataset of ~190,000 abstracts for more comprehensive training and improved performance.
 
-You can specify new Python dependencies in `setup.py`.
+We set up a data pipeline in Dagster. The training data were published on Huggingface. If you nevertheless want to rerun the pipeline follow these steps:
 
-### Unit testing
+1. Open the folder `abstracts_gene_disease` and install the package with:
+   ```bash
+   pip install -e ".[dev]"
+   ```
 
-Tests are in the `opentargetslitreview_tests` directory and you can run tests using `pytest`:
+2. Then, start the Dagster UI web server:
+   ```bash
+   dagster dev
+   ```
 
-```bash
-pytest opentargetslitreview_tests
-```
+3. Open http://localhost:3000 with your browser to see the project and run the materialisation of the different assets. (Running the full materialisation from the command line does not work in this release due to several partitioned assets, this will be fixed in one of the next releases).
 
-### Schedules and sensors
+## Fine Tuning
 
-If you want to enable Dagster [Schedules](https://docs.dagster.io/concepts/partitions-schedules-sensors/schedules) or [Sensors](https://docs.dagster.io/concepts/partitions-schedules-sensors/sensors) for your jobs, the [Dagster Daemon](https://docs.dagster.io/deployment/dagster-daemon) process must be running. This is done automatically when you run `dagster dev`.
+Execute the Python script `finetuning_gene_disease.py` to finetune the model yourself.
 
-Once your Dagster Daemon is running, you can start turning on schedules and sensors for your jobs.
+## Parsing Conference Abstracts
 
-## Deploy on Dagster Cloud
+`example_ASCO_abstracts.py` provides an example script to download and parse the contributions to this year's ASCO.
 
-The easiest way to deploy your Dagster project is to use Dagster Cloud.
+## Exploration with Streamlit App
 
-Check out the [Dagster Cloud Documentation](https://docs.dagster.cloud) to learn more.
+[Details about the Streamlit app would go here]
+
+## Future Developments
+
+This is the first version of our tool. Future iterations will include:
+- Additional information extraction capabilities, such as:
+  - Clinical trial identification and staging
+  - Therapy types used in studies
+  - Biomarker information
+  - Patient cohort characteristics
+- Utilization of the full dataset (~190,000 abstracts) for improved model performance
