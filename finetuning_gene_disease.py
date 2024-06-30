@@ -3,6 +3,7 @@ import os
 import pandas as pd
 import json
 import random
+from datasets import load_dataset
 from mistralai.client import MistralClient
 from mistralai.models.jobs import TrainingParameters
 from mistralai.models.chat_completion import ChatMessage
@@ -11,54 +12,16 @@ from mistralai.models.jobs import WandbIntegrationIn, TrainingParameters
 import numpy as np
 
 
+os.environ["HUGGINGFACE_TOKEN"] = open('../.keys/.hf').read().strip()
 os.environ["MISTRAL_API_KEY"] = open('../.keys/.key_mistral').read()
 os.environ["WANDB_API_KEY"] = open('../.keys/.wandb').read()
 random.seed(123)
 
+# Define the dataset name
+dataset_name = "opentargets_abstracts_gene_disease"
 
-with open("data/pubmed_qa.jsonl", "r") as f:
-    data_pm = [json.loads(line) for line in f]
-with open("data/arxiv_qa.jsonl", "r") as f:
-    data_CS = [json.loads(line) for line in f]
-
-# Combine the data and shuffle them randomly to have a mix of abstracts with and without gene-disease associations and 
-# Todo: check if the mistral API does this anyway
-data = data_pm + data_CS
-del data_pm, data_CS
-data = [data[i] for i in np.random.permutation(len(data))]
-
-
-
-# %%
-
-# take only a part of the data - using everyhing would cost 100s of dollars
-#data = data[:len(data)//5]
-data = data[:len(data)//10]
-
-split_train = int(0.95 * len(data))
-
-train_data = data[:split_train]
-val_data = data[split_train:]
-
-
-os.makedirs('data', exist_ok=True)
-
-with open("data/train_data.jsonl", "w") as f:
-    for entry in train_data:
-        json.dump(entry, f)
-        f.write("\n")
-
-with open("data/val_data.jsonl", "w") as f:
-    for entry in val_data:
-        json.dump(entry, f)
-        f.write("\n")
-
-
-# %%
-
-# run shell command
-os.system("python utils/reformat_data.py data/train_data.jsonl")
-os.system("python utils/reformat_data.py data/val_data.jsonl")
+# Load the dataset
+dataset = load_dataset(dataset_name, use_auth_token=True)
 
 
 # %%
