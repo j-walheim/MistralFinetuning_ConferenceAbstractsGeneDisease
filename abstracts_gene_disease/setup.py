@@ -7,9 +7,9 @@ setup(
         "dagster",
         "pandas",
         "polars",
-        "db-dtypes",
+#        "db-dtypes",
         'polars',
-        'biomart',
+        'biomart'
     ],
     extras_require={"dev": ["dagster-webserver", "pytest"]},
 )

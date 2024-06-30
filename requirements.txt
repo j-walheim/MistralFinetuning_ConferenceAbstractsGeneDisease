@@ -1,0 +1,9 @@
+pandas
+mistralai
+tqdm
+requests
+dagster
+polars
+biomart
+pyarrow
+Bio

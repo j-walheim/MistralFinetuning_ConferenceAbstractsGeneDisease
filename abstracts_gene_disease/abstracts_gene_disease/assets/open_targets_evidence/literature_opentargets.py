@@ -1,7 +1,6 @@
 from dagster import asset, AssetExecutionContext, StaticPartitionsDefinition,AssetIn,AllPartitionMapping
 from ftplib import FTP
 import polars as pl
-import pyarrow.parquet as pq
 import io
 import gc
 import os 

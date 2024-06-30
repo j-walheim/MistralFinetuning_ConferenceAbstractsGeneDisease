@@ -8,8 +8,6 @@ from .assets import (
     CS_abstracts
 )
 
-#from .io_managers import ParquetIOManager
-
 all_assets = [
     *open_targets_evidence_assets,
     *pm_assets,
@@ -18,12 +16,12 @@ all_assets = [
 ]
 
 
-# Addition: define a job that will materialize the assets
-ot_literature = define_asset_job("ot_literature", selection=[open_targets_evidence_assets])
-cs_abstracts = define_asset_job("cs_abstracts", selection=[CS_abstracts])
-pm_abstracts = define_asset_job("pm_abstracts", selection=[pm_assets])
-train_data = define_asset_job("train_assets", selection=[train_assets])
-all_assets_job = define_asset_job(name="all_assets_job")
+# # Addition: define a job that will materialize the assets
+# ot_literature = define_asset_job("ot_literature", selection=[open_targets_evidence_assets])
+# cs_abstracts = define_asset_job("cs_abstracts", selection=[CS_abstracts])
+# pm_abstracts = define_asset_job("pm_abstracts", selection=[pm_assets])
+# train_data = define_asset_job("train_assets", selection=[train_assets])
+# all_assets_job = define_asset_job(name="all_assets_job")
 
 lit_job = define_asset_job(
     name="lit_job", selection="raw_literature"
@@ -33,15 +31,15 @@ lit_job = define_asset_job(
 
 defs = Definitions(
     assets=all_assets,
-#    resources={
-#        "fs_io_manager": FilesystemIOManager(),
-#    },
-    jobs=[all_assets_job,
-          lit_job,
-          ot_literature,
-          cs_abstracts,
-          pm_abstracts,
-          train_data],  
+    resources={
+        "fs_io_manager": FilesystemIOManager(),
+    },
+    # jobs=[all_assets_job,
+    #       lit_job,
+    #       ot_literature,
+    #       cs_abstracts,
+    #       pm_abstracts,
+    #       train_data],  
 )
 
 

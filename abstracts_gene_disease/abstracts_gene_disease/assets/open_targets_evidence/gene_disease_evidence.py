@@ -1,14 +1,8 @@
 from dagster import asset, AssetExecutionContext, StaticPartitionsDefinition, AllPartitionMapping, AssetIn
 from ftplib import FTP
-import pyarrow.parquet as pq
-import pyarrow.compute as pc
-import pyarrow as pa
 import polars as pl
 import pandas as pd
-import os
-from sklearn.model_selection import train_test_split
 from glob import glob
-import tempfile
 from collections import defaultdict
 from .literature_opentargets import raw_opentargets_literature, combined_partitions_literature
 #from .diseases_opentargets import cancer_diseases_opentargets
