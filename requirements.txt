@@ -7,3 +7,10 @@ polars
 biomart
 pyarrow
 Bio
+streamlit
+json
+plotly
+colorsys
+requests
+fuzzywuzzy
+re
