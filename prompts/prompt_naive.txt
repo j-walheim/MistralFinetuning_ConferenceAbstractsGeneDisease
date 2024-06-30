@@ -1,0 +1,37 @@
+Analyze the abstract below and extract disease and gene information. Only include explicitly stated facts. Use "n/a" if information is not clearly provided. Do not infer or guess. Respond in this exact JSON format:
+{
+  "Disease": "Disease name or n/a",
+  "Genes": ["Gene1", "Gene2"] or ["n/a"],
+  "comment": "All additional information here"
+}
+
+Rules:
+- Only include explicitly stated disease and genes in their respective fields
+- Use ["n/a"] if no genes mentioned
+- Put ALL additional information, context, and explanations in "comment"
+- Prioritize precision over completeness
+- When in doubt, use "n/a" in main fields and provide details in comment
+
+Examples:
+{
+  "Disease": "Breast Cancer",
+  "Genes": ["BRCA1", "BRCA2"],
+  "comment": "Study examines BRCA1 and BRCA2 mutations in hereditary breast cancer. Focuses on early detection methods. Sample size: 500 patients. Duration: 5 years."
+}
+
+{
+  "Disease": "Lung Cancer",
+  "Genes": ["n/a"],
+  "comment": "Research on new immunotherapy approaches. No specific genes mentioned. Study includes both small cell and non-small cell lung cancer patients. Preliminary results show 20% improvement in 5-year survival rates."
+}
+
+{
+  "Disease": "Colorectal Cancer",
+  "Genes": ["APC"],
+  "comment": "Research on APC gene's role in early-stage colorectal cancer. Also discusses potential environmental factors and dietary influences. Study conducted across 10 medical centers in Europe."
+}
+
+Abstract:
+<abstract>
+[[[abstract]]]
+</abstract>
