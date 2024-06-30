@@ -26,7 +26,18 @@ The flood of information in medical abstracts presents a challenge for manual re
 
 3. **Data Volume**:
    - Full dataset: ~190,000 labeled abstracts
-   - This version uses only 20k abstracts to keep fine-tuning costs low. As we refine and extend the functionality, we will eventually utilize the entire dataset of ~190,000 abstracts for more comprehensive training and improved performance.
+   - This version uses only 8,000 abstracts to keep fine-tuning costs low. As we refine and extend the functionality, we will eventually utilize the entire dataset of ~190,000 abstracts for more comprehensive training and improved performance.
+
+4. **Synthetic data**:
+   - OpenTargets provides an extremely rich source of gene-disease associations but no negative examples - this can lead to hallucationations for the fine-tuned model ha
+   - We generated synthetic data which contain either disease information, but not gene information, or general medical research (e.g. diagnostics) without any reference to genes or diseases.
+
+5. **Final data**:
+   - 8,000 real abstracts with gene-disease associations
+   - 4,000 synthetic abstracts with disease but not gene-association, or neither of the two
+
+
+
 
 We set up a data pipeline in Dagster. The training data were published on Huggingface. If you nevertheless want to rerun the pipeline follow these steps:
 
@@ -44,11 +55,11 @@ We set up a data pipeline in Dagster. The training data were published on Huggin
 
 ## Fine Tuning
 
-Execute the Python script `finetuning_gene_disease.py` to finetune the model yourself.
+Execute the Python script `[finetuning_gene_disease](02_finetuning_gene_disease.py).py` to finetune the model yourself.
 
 ## Parsing Conference Abstracts
 
-`example_ASCO_abstracts.py` provides an example script to download and parse the contributions to this year's ASCO.
+`03_example_ASCO_abstracts.py` provides an example script to download and parse the contributions to this year's ASCO conference. 
 
 ## Exploration with Streamlit App
 
@@ -57,9 +68,11 @@ Execute the Python script `finetuning_gene_disease.py` to finetune the model you
 ## Future Developments
 
 This is the first version of our tool. Future iterations will include:
+
 - Additional information extraction capabilities, such as:
   - Clinical trial identification and staging
   - Therapy types used in studies
   - Biomarker information
   - Patient cohort characteristics
+- Inclusion of additional data sources, e.g. clinical-trials.gov
 - Utilization of the full dataset (~190,000 abstracts) for improved model performance

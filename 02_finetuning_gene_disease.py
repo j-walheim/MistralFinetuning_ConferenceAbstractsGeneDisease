@@ -52,12 +52,7 @@ with open("data/.tmp_val_data.jsonl", "rb") as f:
 
 
 
-# %%
-# Create fine-tuning job
-
-
-
-
+# %% Create fine-tuning job
 created_job = client.jobs.create(
     model="open-mistral-7b",
     training_files=[train_file.id],
@@ -75,15 +70,3 @@ created_job = client.jobs.create(
         ).dict()
     ]
 )
-
-print(created_job)
-
-# %%
-
-# Monitor progress
-retrieved_job = client.jobs.retrieve(created_job.id)
-print(retrieved_job)
-# %%print all models are ready
-client.list_models()
-
-# %%

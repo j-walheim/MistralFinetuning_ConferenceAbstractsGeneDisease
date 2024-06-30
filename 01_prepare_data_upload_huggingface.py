@@ -21,18 +21,20 @@ fname_synthetic_json = 'data/synthetic_qa.jsonl'
 df_synth = generate_synthetic_abstracts(dir_out = fname_synthetic, target_rows=10)
 
 df = pd.read_csv(fname_synthetic)
-
-# rename disease to disease_name and genes to gene_name to be consistent with open targets. 
-# Todo: change in generation process in future version
-df = df.rename(columns={'disease': 'disease_name', 'genes': 'gene'})
 df_formatted = createPromptsJsonl(df,fname_synthetic_json)
 
 # %%
 
 os.environ["HUGGINGFACE_TOKEN"] = open('../.keys/.hf').read().strip()
 
-
-with open(fname_synthetic_json, "r") as f:
+if not os.path.exists("data/pubmed_qa.jsonl"):
+    print('Error: The required file "pubmed_qa.jsonl" was not found in the "data" directory.')
+    print('Please ensure that you have run the Dagster pipeline to generate this file.')
+    print('If you have not run the pipeline, please do so before proceeding.')
+    print('Alternatively, you can use the prepared data on Huggingface by running "2_finetuning_gene_disease.py" instead.')
+    exit()
+    
+with open('data/pubmed_qa.jsonl', "r") as f:
     data_pm = [json.loads(line) for line in f]
     # take only a part of the data - using everyhing would cost 100s of dollars
     data_pm = data_pm[:8000]
