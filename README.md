@@ -6,7 +6,12 @@ This project aims to extract gene and disease information from medical conferenc
 
 ## Motivation
 
-The flood of information in medical abstracts presents a challenge for manual review. Major conferences in oncology and cancer research, such as ASCO (American Society of Clinical Oncology), AACR (American Association for Cancer Research), and ESMO (European Society for Medical Oncology), receive thousands of abstract submissions each year. Keeping track of all this information manually is virtually impossible, leading to potential missed opportunities in research and clinical practice. This tool aims to automate the extraction process, saving time and effort while maintaining accuracy.
+The flood of information in medical abstracts presents a challenge for manual review. At major conferences in oncology and cancer research, such as ASCO (American Society of Clinical Oncology), AACR (American Association for Cancer Research), and ESMO (European Society for Medical Oncology), thousands of abstract get published every year. Keeping track of all this information manually is virtually impossible, leading to potential missed opportunities in research and clinical practice. This tool aims to automate the extraction process, saving time and effort while maintaining accuracy.
+
+## Use cases
+
+- Hypothesis generation for downstream analysis in real-world patient datasets, such as TCGA
+- Competitive landscape assessment
 
 ## Key Features
 
