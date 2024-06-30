@@ -7,6 +7,7 @@ setup(
         "dagster",
         "pandas",
         "polars",
+        "pyarrow",
 #        "db-dtypes",
         'polars',
         'biomart'
