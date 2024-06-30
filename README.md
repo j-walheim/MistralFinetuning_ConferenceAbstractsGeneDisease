@@ -1,65 +1,49 @@
-# Gene and Disease Information Extraction from Conference Abstracts
+---
+language:
+- en
+license: mit
+task_categories:
+- text-classification
+pretty_name: OpenTargets Abstracts Gene-Disease
+tags:
+- biology
+- genetics
+- disease
+dataset_description: opentargets_abstracts_gene_disease
+---
 
-## Overview
+# Dataset Card for opentargets_abstracts_gene_disease
 
-This project aims to extract gene and disease information from medical conference abstracts using a fine-tuned version of Mistral 7B in Python. Our goal is to help researchers and healthcare professionals efficiently process the vast amount of information available in medical literature.
+## Dataset Description
 
-## Motivation
+- **Repository:** [opentargets_abstracts_gene_disease](https://huggingface.co/datasets/opentargets_abstracts_gene_disease)
+- **Point of Contact:** [Your Name or Organization]
 
-The flood of information in medical abstracts presents a challenge for manual review. Major conferences in oncology and cancer research, such as ASCO (American Society of Clinical Oncology), AACR (American Association for Cancer Research), and ESMO (European Society for Medical Oncology), receive thousands of abstract submissions each year. Keeping track of all this information manually is virtually impossible, leading to potential missed opportunities in research and clinical practice. This tool aims to automate the extraction process, saving time and effort while maintaining accuracy.
+## Dataset Summary
 
-## Key Features
+[Provide a short description of the dataset here]
 
-- Extracts gene and disease information from conference abstracts
-- Results are stored in JSON format
-- Explore results using a Streamlit GUI
+## Supported Tasks and Leaderboards
 
-## Data Sources and Feature Preparation
+[Describe the supported tasks and any associated leaderboards]
 
-1. **OpenTargets Platform**: We use the OpenTargets Platform as our primary source of gene-disease associations in PubMed abstracts.
-   - We ingest literature information from the platform
-   - Filter entries for cancer indications and in-human results
+## Languages
 
-2. **Complementary Information**:
-   - **Biomart**: Retrieve mapping of HGNSC symbols to HUGO symbols
-   - **PubMed**: OpenTargets only provides PubMed IDs, we retrieve the full abstracts from PubMed.
+The dataset is in English.
 
-3. **Data Volume**:
-   - Full dataset: ~190,000 labeled abstracts
-   - This version uses only 20k abstracts to keep fine-tuning costs low. As we refine and extend the functionality, we will eventually utilize the entire dataset of ~190,000 abstracts for more comprehensive training and improved performance.
+## Dataset Structure
 
-We set up a data pipeline in Dagster. The training data were published on Huggingface. If you nevertheless want to rerun the pipeline follow these steps:
+[Describe the structure of the dataset, including splits, number of examples, etc.]
 
-1. Open the folder `abstracts_gene_disease` and install the package with:
-   ```bash
-   pip install -e ".[dev]"
-   ```
+## Dataset Creation
 
-2. Then, start the Dagster UI web server:
-   ```bash
-   dagster dev
-   ```
+[Provide information about how the dataset was created]
 
-3. Open http://localhost:3000 with your browser to see the project and run the materialisation of the different assets. (Running the full materialisation from the command line does not work in this release due to several partitioned assets, this will be fixed in one of the next releases).
+## Considerations for Using the Data
 
-## Fine Tuning
+[Discuss any social impact, legal, or ethical considerations]
 
-Execute the Python script `finetuning_gene_disease.py` to finetune the model yourself.
+## Additional Information
 
-## Parsing Conference Abstracts
+[Any other relevant information about the dataset]
 
-`example_ASCO_abstracts.py` provides an example script to download and parse the contributions to this year's ASCO.
-
-## Exploration with Streamlit App
-
-[Details about the Streamlit app would go here]
-
-## Future Developments
-
-This is the first version of our tool. Future iterations will include:
-- Additional information extraction capabilities, such as:
-  - Clinical trial identification and staging
-  - Therapy types used in studies
-  - Biomarker information
-  - Patient cohort characteristics
-- Utilization of the full dataset (~190,000 abstracts) for improved model performance
