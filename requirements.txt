@@ -9,7 +9,6 @@ pyarrow
 Bio
 streamlit
 plotly
-colorsys
 requests
 fuzzywuzzy
-re
+graphviz
