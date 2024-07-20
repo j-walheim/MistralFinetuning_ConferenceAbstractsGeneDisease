@@ -1,6 +1,6 @@
 from airflow.decorators import task
 from ftplib import FTP
-from airflow_gene_disease_data.config import LITERATURE_FTP_URL, LITERATURE_FTP_DIR, ENVIRONMENT, N_PARTITIONS_DEV
+from config.pipeline import LITERATURE_FTP_URL, LITERATURE_FTP_DIR, ENVIRONMENT, N_PARTITIONS_DEV
 from .helpers import log_progress
 
 @task
