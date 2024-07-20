@@ -49,7 +49,7 @@ def process_cancer_diseases(**kwargs):
             
             
     output_file = os.path.join(STORAGE_DIR, 'cancer_diseases.parquet')
-    ensure_dir(os.path.dirname(output_file))
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
     disease.to_parquet(output_file)
     return output_file
     
