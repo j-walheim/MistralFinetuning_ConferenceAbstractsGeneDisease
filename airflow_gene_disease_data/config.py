@@ -16,8 +16,8 @@ DEFAULT_ARGS = {
 }
 
 # Number of partitions for literature processing
-NUM_PARTITIONS = 200 if ENVIRONMENT == 'production' else 3
-
+NUM_PARTITIONS = 200 if ENVIRONMENT == 'production' else 2
+N_PARTITIONS_DEV = 5
 # FTP configuration
 LITERATURE_FTP_URL = "ftp.ebi.ac.uk"
 LITERATURE_FTP_DIR = "/pub/databases/opentargets/platform/22.04/output/literature-etl/parquet/matches/"
@@ -27,7 +27,7 @@ DISEASES_FTP_DIR = "pub/databases/opentargets/platform/22.04/output/etl/parquet/
 
 # Storage configuration
 #STORAGE_DIR = os.path.join(os.getenv("AIRFLOW_HOME", ""), 'storage')
-STORAGE_DIR = '/teamspace/studios/this_studio/MistralFinetuning_ConferenceAbstractsGeneDisease/.data_raw'
+STORAGE_DIR = '/teamspace/studios/this_studio/MistralFinetuning_ConferenceAbstractsGeneDisease/data_raw'
 
 
 # You can add more environment-specific configurations here
