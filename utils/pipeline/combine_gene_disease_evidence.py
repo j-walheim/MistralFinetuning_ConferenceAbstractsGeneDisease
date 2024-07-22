@@ -155,7 +155,7 @@ def subsample_data(gene_disease_combined_file, **kwargs):
     NUM_DISEASE_MAX = 2000  # upper limit to get more equal representation in training data
     random_state = 123
     
-    if NUM_ABSTRACTS_SUB < len(gene_disease_combined):
+    if NUM_ABSTRACTS_SUB > len(gene_disease_combined):
         
         log_progress(ti, f"Not doing any subsampling as number of rows in gene_disease_combined is lower than desired subset. This should only happen in DEV mode!!!")
         gene_disease_sub = gene_disease_combined
