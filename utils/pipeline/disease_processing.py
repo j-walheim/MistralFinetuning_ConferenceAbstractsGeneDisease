@@ -11,7 +11,7 @@ import pandas as pd
 import io
 
 @task
-def process_cancer_diseases(**kwargs):
+def get_cancer_diseases(**kwargs):
     ti = kwargs['ti']
     log_progress(ti, "Processing cancer diseases")
     
