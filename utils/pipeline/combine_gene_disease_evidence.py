@@ -154,39 +154,45 @@ def subsample_data(gene_disease_combined_file, **kwargs):
     NUM_ABSTRACTS_SUB = 20000  # take only a subset of abstracts
     NUM_DISEASE_MAX = 2000  # upper limit to get more equal representation in training data
     random_state = 123
-
-    gene_disease_combined = gene_disease_combined.explode('organisms')        
-    gene_disease_combined = gene_disease_combined.filter(
-        pl.col('organisms').cast(pl.Utf8).str.to_lowercase().is_in(['human', 'humans', 'woman', 'man']))
-    gene_disease_combined = gene_disease_combined.drop('organisms').unique()
     
-    disease_counts = gene_disease_combined['disease_name'].value_counts().head(20)
-    log_progress(ti, f"Top 20 disease counts:\n{disease_counts}")
+    if NUM_ABSTRACTS_SUB < len(gene_disease_combined):
+        
+        log_progress(ti, f"Not doing any subsampling as number of rows in gene_disease_combined is lower than desired subset. This should only happen in DEV mode!!!")
+        gene_disease_sub = gene_disease_combined
+    else:
+        
+        gene_disease_combined = gene_disease_combined.explode('organisms')        
+        gene_disease_combined = gene_disease_combined.filter(
+            pl.col('organisms').cast(pl.Utf8).str.to_lowercase().is_in(['human', 'humans', 'woman', 'man']))
+        gene_disease_combined = gene_disease_combined.drop('organisms').unique()
+        
+        disease_counts = gene_disease_combined['disease_name'].value_counts().head(20)
+        log_progress(ti, f"Top 20 disease counts:\n{disease_counts}")
 
-    gene_disease_combined = gene_disease_combined.sample(fraction=1.0, seed=random_state)
-    gene_disease_combined = gene_disease_combined.group_by('disease_name').head(int(NUM_DISEASE_MAX))
-    
-    fraction = NUM_ABSTRACTS_SUB / len(gene_disease_combined)
+        gene_disease_combined = gene_disease_combined.sample(fraction=1.0, seed=random_state)
+        gene_disease_combined = gene_disease_combined.group_by('disease_name').head(int(NUM_DISEASE_MAX))
+        
+        fraction = NUM_ABSTRACTS_SUB / len(gene_disease_combined)
 
-    def stratified_sample(group):
-        n = int(len(group) * fraction)
-        return group.sample(n, seed=random_state)
+        def stratified_sample(group):
+            n = int(len(group) * fraction)
+            return group.sample(n, seed=random_state)
 
-    gene_disease_sub = gene_disease_combined.groupby('disease_name').map_groups(stratified_sample)
+        gene_disease_sub = gene_disease_combined.group_by('disease_name').map_groups(stratified_sample)
 
-    n_additional = NUM_ABSTRACTS_SUB - len(gene_disease_sub)
-    
-    if n_additional > 0:
-        gene_disease_sub = pl.concat([
-            gene_disease_sub,
-            gene_disease_combined.filter(~pl.col('pmid').is_in(gene_disease_sub.get_column('pmid')))
-                                    .head(int(n_additional))
-        ])
+        n_additional = NUM_ABSTRACTS_SUB - len(gene_disease_sub)
+        
+        if n_additional > 0:
+            gene_disease_sub = pl.concat([
+                gene_disease_sub,
+                gene_disease_combined.filter(~pl.col('pmid').is_in(gene_disease_sub.get_column('pmid')))
+                                        .head(int(n_additional))
+            ])
 
-    gene_disease_sub = gene_disease_sub.sample(fraction=1.0, seed=random_state)
-    
-    log_progress(ti, f'Sampled {len(gene_disease_sub)} rows out of {len(gene_disease_combined)} rows')
-    log_progress(ti, f"Top 20 sampled disease counts:\n{gene_disease_sub['disease_name'].value_counts().head(20)}")
+        gene_disease_sub = gene_disease_sub.sample(fraction=1.0, seed=random_state)
+        
+        log_progress(ti, f'Sampled {len(gene_disease_sub)} rows out of {len(gene_disease_combined)} rows')
+        log_progress(ti, f"Top 20 sampled disease counts:\n{gene_disease_sub['disease_name'].value_counts().head(20)}")
 
     out_path = os.path.join(STORAGE_DIR, 'data_subsampled.parquet')
     gene_disease_sub.write_parquet(out_path)
