@@ -2,7 +2,8 @@ from datetime import datetime, timedelta
 import os
 
 # Determine the environment
-ENVIRONMENT = os.getenv('AIRFLOW_ENVIRONMENT', 'development').lower()
+#ENVIRONMENT = 'development' 
+ENVIRONMENT = 'production' #os.getenv('AIRFLOW_ENVIRONMENT', 'development').lower()
 
 # Airflow DAG configuration
 DEFAULT_ARGS = {

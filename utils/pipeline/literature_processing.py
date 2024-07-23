@@ -74,11 +74,12 @@ def combine_literature_files(file_list, **kwargs):
         raise ValueError("No valid files found to combine.")
     
     lazy_dfs = [pl.scan_parquet(file) for file in valid_files]
-    combined_df = pl.concat(lazy_dfs).collect()
+    combined_lazy = pl.concat(lazy_dfs)
+    
     
     output_file = os.path.join(STORAGE_DIR, 'combined_opentargets_literature.parquet')
     os.makedirs(os.path.dirname(output_file), exist_ok=True)
-    combined_df.write_parquet(output_file)
+    combined_lazy.sink_parquet(output_file)
     
     log_progress(ti, "Finished combining literature files")
     return output_file
