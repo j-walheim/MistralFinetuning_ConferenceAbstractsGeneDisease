@@ -1,5 +1,5 @@
 from airflow.decorators import task
-from config.pipeline import DEFAULT_ARGS, ENVIRONMENT,DISEASES_FTP_URL,DISEASES_FTP_DIR,  N_PARTITIONS_DEV, LITERATURE_FTP_URL, LITERATURE_FTP_DIR, STORAGE_DIR
+from config.pipeline import  LITERATURE_FTP_URL, LITERATURE_FTP_DIR, STORAGE_DIR
 import polars as pl
 import pyarrow.parquet as pq
 import os

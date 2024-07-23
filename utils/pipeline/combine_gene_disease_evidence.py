@@ -1,4 +1,3 @@
-from airflow import DAG
 from airflow.decorators import task
 import polars as pl
 import pandas as pd
@@ -197,5 +196,7 @@ def subsample_data(gene_disease_combined_file, **kwargs):
     out_path = os.path.join(STORAGE_DIR, 'data_subsampled.parquet')
     gene_disease_sub.write_parquet(out_path)
     log_progress(ti, f"Subsampled data saved to {out_path}")
+
+
     return out_path
 

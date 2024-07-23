@@ -16,7 +16,7 @@ DEFAULT_ARGS = {
 }
 
 # Number of partitions for literature processing
-NUM_PARTITIONS = 200 if ENVIRONMENT == 'production' else 2
+#NUM_PARTITIONS = 200 if ENVIRONMENT == 'production' else 2
 N_PARTITIONS_DEV = 5
 # FTP configuration
 LITERATURE_FTP_URL = "ftp.ebi.ac.uk"
