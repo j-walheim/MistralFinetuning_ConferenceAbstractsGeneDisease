@@ -35,7 +35,7 @@ def createPromptsJsonl(fname_abstract_evidence,**kwargs):
         df_formatted.append(formatted_item)
 
     # Write to jsonl
-    out_path = os.path.join(STORAGE_DIR, 'abstracts_prompts.jsonl')
+    out_path = os.path.join(STORAGE_DIR, 'pubmed_qa.jsonl')
     with open(out_path, 'w') as f:
         for item in df_formatted:
             json.dump(item, f)
