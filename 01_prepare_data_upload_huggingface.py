@@ -25,7 +25,7 @@ df_formatted = createPromptsJsonl(df,fname_synthetic_json)
 
 # %%
 
-if not os.path.exists("data/pubmed_qa.jsonl"):
+if not os.path.exists("data_raw/pubmed_qa.jsonl"):
     print('Error: The required file "pubmed_qa.jsonl" was not found in the "data" directory.')
     print('Please ensure that you have run the Dagster pipeline to generate this file.')
     print('If you have not run the pipeline, please do so before proceeding.')
