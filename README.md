@@ -52,20 +52,7 @@ This is the first version of our tool. Future iterations will include:
 
 
 
-
-We set up a data pipeline in Dagster. The training data were published on Huggingface. If you nevertheless want to rerun the pipeline follow these steps:
-
-1. Open the folder `abstracts_gene_disease` and install the package with:
-   ```bash
-   pip install -e ".[dev]"
-   ```
-
-2. Then, start the Dagster UI web server:
-   ```bash
-   dagster dev
-   ```
-
-3. Open http://localhost:3000 with your browser to see the project and run the materialisation of the different assets. (Running the full materialisation from the command line does not work in this release due to several partitioned assets, this will be fixed in one of the next releases).
+We set up an airflow pipeline for the data preparation. The training data were published on Huggingface. If you nevertheless want to rerun the pipeline, you can find it in airflow_gene_disease_data
 
 ## Fine Tuning
 
