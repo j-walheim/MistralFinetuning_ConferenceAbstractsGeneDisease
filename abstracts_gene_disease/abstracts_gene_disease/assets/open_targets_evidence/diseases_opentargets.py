@@ -5,6 +5,7 @@ import pyarrow.parquet as pq
 import os
 import pyarrow as pa
 from ftplib import FTP
+<<<<<<<< HEAD:utils/pipeline/disease_processing.py
 from utils.pipeline.helpers import log_progress
 
 import pandas as pd
@@ -22,9 +23,31 @@ def get_cancer_diseases(**kwargs):
         ftp.cwd(DISEASES_FTP_DIR)
         
         parquet_files = [file for file in ftp.nlst() if file.endswith('.parquet')]
+========
+from dagster import asset, AssetExecutionContext
+import pandas as pd
+import io
+
+
+@asset
+def cancer_diseases_opentargets(context: AssetExecutionContext,) -> pd.DataFrame:
+    
+    url = "ftp.ebi.ac.uk"
+    directory = "pub/databases/opentargets/platform/22.04/output/etl/parquet/diseases/"
+    
+    with FTP(url) as ftp:
+        ftp.login()
+        ftp.cwd(directory)
+        parquet_files = [file for file in ftp.nlst() if file.endswith('.parquet')]
+            
+    disease = []
+    with FTP(url) as ftp:
+        ftp.login()
+        ftp.cwd(directory)
+>>>>>>>> main:abstracts_gene_disease/abstracts_gene_disease/assets/open_targets_evidence/diseases_opentargets.py
         
         for file in parquet_files:
-            log_progress(ti, f"Processing {file}")
+            context.log.info(f"Processing {file}")
             with io.BytesIO() as buffer:
                 ftp.retrbinary(f'RETR {file}', buffer.write)
                 buffer.seek(0)
@@ -44,6 +67,7 @@ def get_cancer_diseases(**kwargs):
     # drop abstract categories
     disease = disease[~disease['name'].isin(['cancer', 'neoplasm', 'cancer', 'carcinoma', 'cirrhosis of liver'])]
 
+<<<<<<<< HEAD:utils/pipeline/disease_processing.py
     log_progress(ti,f"Found {disease.shape[0]} cancer diseases")
     log_progress(ti,disease.head())
             
@@ -52,3 +76,11 @@ def get_cancer_diseases(**kwargs):
     os.makedirs(os.path.dirname(output_file), exist_ok=True)
     disease.to_parquet(output_file)
     return output_file
+    
+========
+    context.log.info(f"Found {disease.shape[0]} cancer diseases")
+    context.log.info(disease.head())
+            
+    return disease
+
+>>>>>>>> main:abstracts_gene_disease/abstracts_gene_disease/assets/open_targets_evidence/diseases_opentargets.py
