@@ -1,18 +1,17 @@
-from dagster import asset, AssetExecutionContext
+from airflow.decorators import task
 import pandas as pd
 import json
 import csv
 import pickle
 import os
+from config.pipeline import STORAGE_DIR
 
-from dagster import asset, AllPartitionMapping, AssetIn  
 
-import json
-import pandas as pd
+@task
+def createPromptsJsonl(fname_abstract_evidence,**kwargs):
+    prompt = open('prompts/prompt_finetuning.txt', 'r').read()
 
-def createPromptsJsonl(df, fname_out):
-    prompt = open('../prompts/prompt_finetuning.txt', 'r').read()
-
+    df = pd.read_parquet(fname_abstract_evidence )
     # Create the formatted list of dictionaries
     df_formatted = []
     for index, row in df.iterrows():
@@ -36,24 +35,10 @@ def createPromptsJsonl(df, fname_out):
         df_formatted.append(formatted_item)
 
     # Write to jsonl
-    with open('../data/' + fname_out + '.jsonl', 'w') as f:
+    out_path = os.path.join(STORAGE_DIR, 'pubmed_qa.jsonl')
+    with open(out_path, 'w') as f:
         for item in df_formatted:
             json.dump(item, f)
             f.write('\n')
 
     return df_formatted
-
-
-@asset(ins={"data_with_pubmed": AssetIn(partition_mapping=AllPartitionMapping())})
-def prompts_jsonl_pubmed(context: AssetExecutionContext, data_with_pubmed: dict) -> None:
-
-    # Todo: move code to polars
-    df = pd.concat([df.to_pandas() for df in data_with_pubmed.values()], ignore_index=True)
-    createPromptsJsonl(df,'pubmed_qa')
-    
-# @asset(ins={"arxiv_abstracts": AssetIn(partition_mapping=AllPartitionMapping())})
-# def prompts_jsonl_arxiv(context: AssetExecutionContext, arxiv_abstracts: dict) -> None:
-
-#     # Todo: move code to polars
-#     df = pd.concat([df.to_pandas() for df in arxiv_abstracts.values()], ignore_index=True)
-#     createPromptsJsonl(df,'arxiv_qa')

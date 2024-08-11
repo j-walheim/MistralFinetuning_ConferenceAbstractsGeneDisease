@@ -1,27 +1,30 @@
+from airflow.decorators import task
+from config.pipeline import DEFAULT_ARGS, ENVIRONMENT,DISEASES_FTP_URL,DISEASES_FTP_DIR,  N_PARTITIONS_DEV, LITERATURE_FTP_URL, LITERATURE_FTP_DIR, STORAGE_DIR
+import polars as pl
+import pyarrow.parquet as pq
+import os
+import pyarrow as pa
 from ftplib import FTP
-from dagster import asset, AssetExecutionContext
+from utils.pipeline.helpers import log_progress
+
 import pandas as pd
 import io
 
-
-@asset
-def cancer_diseases_opentargets(context: AssetExecutionContext,) -> pd.DataFrame:
+@task
+def get_cancer_diseases(**kwargs):
+    ti = kwargs['ti']
+    log_progress(ti, "Processing cancer diseases")
     
-    url = "ftp.ebi.ac.uk"
-    directory = "pub/databases/opentargets/platform/22.04/output/etl/parquet/diseases/"
-    
-    with FTP(url) as ftp:
-        ftp.login()
-        ftp.cwd(directory)
-        parquet_files = [file for file in ftp.nlst() if file.endswith('.parquet')]
-            
+        
     disease = []
-    with FTP(url) as ftp:
+    with FTP(DISEASES_FTP_URL) as ftp:
         ftp.login()
-        ftp.cwd(directory)
+        ftp.cwd(DISEASES_FTP_DIR)
+        
+        parquet_files = [file for file in ftp.nlst() if file.endswith('.parquet')]
         
         for file in parquet_files:
-            context.log.info(f"Processing {file}")
+            log_progress(ti, f"Processing {file}")
             with io.BytesIO() as buffer:
                 ftp.retrbinary(f'RETR {file}', buffer.write)
                 buffer.seek(0)
@@ -41,8 +44,11 @@ def cancer_diseases_opentargets(context: AssetExecutionContext,) -> pd.DataFrame
     # drop abstract categories
     disease = disease[~disease['name'].isin(['cancer', 'neoplasm', 'cancer', 'carcinoma', 'cirrhosis of liver'])]
 
-    context.log.info(f"Found {disease.shape[0]} cancer diseases")
-    context.log.info(disease.head())
+    log_progress(ti,f"Found {disease.shape[0]} cancer diseases")
+    log_progress(ti,disease.head())
             
-    return disease
-
+            
+    output_file = os.path.join(STORAGE_DIR, 'cancer_diseases.parquet')
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+    disease.to_parquet(output_file)
+    return output_file

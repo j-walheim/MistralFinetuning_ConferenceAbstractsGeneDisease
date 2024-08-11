@@ -1,3 +1,6 @@
+from airflow.decorators import task
+from config.pipeline import DEFAULT_ARGS, ENVIRONMENT,DISEASES_FTP_URL,DISEASES_FTP_DIR,  N_PARTITIONS_DEV, LITERATURE_FTP_URL, LITERATURE_FTP_DIR, STORAGE_DIR
+
 from biomart import BiomartServer
 import pandas as pd
 from dagster import asset
@@ -7,8 +10,8 @@ import polars as pl
 import os
 from biomart import BiomartServer
 
-@asset(name="hugo_symbols")  # group_name = 'ingestion', description = 'Download mapping ENSG -> HUGO symbols'
-def get_hugo_symbols_df() -> pl.DataFrame:
+@task
+def get_hugo_symbols_df():
     # Connect to the Ensembl Biomart server
     server = BiomartServer("http://www.ensembl.org/biomart")
     # Select the dataset
@@ -37,7 +40,7 @@ def get_hugo_symbols_df() -> pl.DataFrame:
         'ENSG': ensg_list,
         'HUGO': hugo_list
     })
-        
-    return df
-
-
+    
+    out_path = os.path.join(STORAGE_DIR, 'hugo_symbols.parquet')
+    df.write_parquet(out_path)
+    return out_path
